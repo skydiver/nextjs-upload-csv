@@ -20,7 +20,7 @@ const Home = () => {
     const response = await axios.post('/api/uploads', formData, config);
 
     if (response.data.status === 'success') {
-      alert('Check your email!');
+      alert('CSV upload successfully');
     }
 
     console.log('response', response.data);
@@ -49,17 +49,18 @@ const Home = () => {
           <button
             type="button"
             className="inline-flex items-center px-6 py-3 border border-gray-300 shadow-sm text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            onClick={onClickHandler}>
-            Select file + Send email
+            onClick={onClickHandler}
+          >
+            Select CSV and upload
           </button>
           <input
-            accept=""
             multiple={false}
             name="attachment"
             onChange={onChangeHandler}
             ref={fileInputRef}
             style={{ display: 'none' }}
             type="file"
+            accept=".csv"
           />
         </form>
       </div>

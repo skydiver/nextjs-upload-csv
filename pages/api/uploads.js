@@ -1,8 +1,6 @@
 import nextConnect from 'next-connect';
 import multer from 'multer';
-
-const formData = require('form-data');
-const Mailgun = require('mailgun.js');
+import csv from 'async-csv';
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
@@ -19,27 +17,11 @@ const apiRoute = nextConnect({
 apiRoute.use(upload.single('attachment'));
 
 apiRoute.post(async (req, res) => {
-  const mailgun = new Mailgun(formData);
+  const { buffer } = req.file;
 
-  const mg = mailgun.client({
-    username: 'api',
-    key: process.env.MAILGUN_API_KEY
-  });
-
-  const { originalname, buffer } = req.file;
-
-  const emailToSend = {
-    from: process.env.ADDRESS_FROM,
-    to: process.env.ADDRESS_TO,
-    subject: 'DEMO EMAIL: Next.js + Uploads + Mailgun',
-    attachment: {
-      filename: originalname,
-      data: buffer
-    },
-    html: `<p style="white-space: pre-line">Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsa eos quis blanditiis aliquam ratione, explicabo non dolorem natus dignissimos magni ullam aut dolore ea qui voluptatem illo unde deserunt totam!</p>`
-  };
-
-  await mg.messages.create(process.env.MAILGUN_DOMAIN, emailToSend);
+  /** CSV converted to JavaScript object */
+  const rows = await csv.parse(buffer);
+  console.log(rows);
 
   res.status(200).json({ status: 'success' });
 });
